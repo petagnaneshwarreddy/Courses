@@ -4,7 +4,7 @@ import axios from "axios";
 import Nav from "./Nav";
 
 // Same API root the rest of the app uses.
-const API_BASE = "https://course-backend-01ye.onrender.com";
+const API_BASE = "http://localhost:5000";
 
 // Mount this at a route like:  <Route path="/courses/:id/learn" element={<Content />} />
 // and point "Continue Learning" / "Start for Free" buttons at `/courses/${course.id}/learn`.

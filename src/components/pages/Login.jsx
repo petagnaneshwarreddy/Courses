@@ -10,9 +10,9 @@ import axios from 'axios';
  * the platform's own /explore and /courses routes.
  */
 
-// Base URL of the deployed backend (see server.js). Keep this in sync with
-// the same constant in Register.jsx — both must point at the live Render
-// deploy, e.g. https://course-backend-0lye.onrender.com
+// Base URL only — no trailing route here. Each request below appends its
+// own path (e.g. `${API_BASE_URL}/login`), so this must NOT already end
+// in "/login" or you'll end up calling /login/login (404).
 const API_BASE_URL = "https://course-backend-0lye.onrender.com";
 
 /* Small inline SVG icon set (stroke-based, currentColor) used inside the
@@ -495,8 +495,8 @@ const Login = () => {
 
             <div className="lg-row-between">
               <Link to="/forgot-password" className="lg-link">
-  Forgot password?
-</Link>
+                Forgot password?
+              </Link>
             </div>
 
             <button type="submit" className="lg-submit" disabled={submitting}>

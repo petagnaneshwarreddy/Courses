@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Nav from "./Nav";
 
-const API_BASE = "https://course-backend-01ye.onrender.com";
+const API_BASE = "http://localhost:5000";
 
 /* ------------------------------------------------------------------
    DASHBOARD.js — Landing page after login

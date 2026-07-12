@@ -9,12 +9,6 @@ import axios from "axios";
  * so the two screens read as one product.
  */
 
-// Base URL of the deployed backend (see server.js). Kept in one place so
-// every component that talks to the API (Login, Register, Dashboard, …)
-// points at the same host — update this one line if the backend ever
-// moves to a new URL.
-const API_BASE_URL = "https://course-backend-0lye.onrender.com";
-
 /* Same stroke-based, currentColor icon set used on Login — kept local to
    the component so each page stays self-contained. */
 const Icon = {
@@ -73,11 +67,14 @@ const Register = () => {
     setMessage("");
 
     try {
-      const res = await axios.post(`${API_BASE_URL}/register`, {
-        username,
-        email,
-        password,
-      });
+      const res = await axios.post(
+        "http://localhost:5000/register",
+        {
+          username,
+          email,
+          password,
+        }
+      );
 
       setMessageType("success");
       setMessage(res.data.message || "Registration successful.");

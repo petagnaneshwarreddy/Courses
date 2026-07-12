@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Nav from "./Nav";
 
-const API_BASE = "https://course-backend-0lye.onrender.com";
+const API_BASE = "http://localhost:5000";
 
 /* ------------------------------------------------------------------
    PROFILE.js — Account profile page (student + admin)
@@ -25,11 +25,10 @@ const API_BASE = "https://course-backend-0lye.onrender.com";
    expects (see Nav.js docblock for the `.app-shell` / `.app-main`
    contract). No duplicate sidebar/topbar markup lives here anymore.
 
-   API (see API_BASE above — keep this in sync with Login.jsx,
-   Register.jsx, Students.js, and Settings.js)
-     GET ${API_BASE}/profile
-     PUT ${API_BASE}/profile
-     PUT ${API_BASE}/profile/password
+   API
+     GET https://backend-qtzh.onrender.com/profile
+     PUT https://backend-qtzh.onrender.com/profile
+     PUT https://backend-qtzh.onrender.com/profile/password
    Falls back to sample data if the API isn't reachable yet, so the
    page always renders a complete preview.
 ------------------------------------------------------------------- */

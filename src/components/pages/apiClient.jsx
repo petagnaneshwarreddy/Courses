@@ -40,9 +40,12 @@ import axios from "axios";
 // Same backend URL used across the app. Keep this the ONLY place it's
 // defined once you migrate a page to apiClient, so there's no more
 // risk of one file pointing at backend-qtzh and another at backend-4138.
-const API_BASE = "https://course-backend-01ye.onrender.com";
+const API_BASE = "https://course-backend-0lye.onrender.com";
 
-const LOGIN_ROUTE = "/explore/login"; // adjust if your login route differs
+// Must match the actual route your login page is mounted at in your
+// router (App.js). Login.jsx renders at "/login", so this has to be
+// "/login" too — a mismatch here causes a broken redirect on 401.
+const LOGIN_ROUTE = "/login";
 
 const api = axios.create({
   baseURL: API_BASE,
