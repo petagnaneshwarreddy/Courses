@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import api from "./apiClient";
 
 /**
  * Register
  * Single-file component — markup, behavior, and styling all live here.
  * Shares the "index card on a syllabus panel" design system used on Login,
  * so the two screens read as one product.
+ *
+ * Uses the shared `api` client (./apiClient) instead of a local axios
+ * call with a hardcoded URL, so the backend URL is defined once for the
+ * whole app.
  */
 
 /* Same stroke-based, currentColor icon set used on Login — kept local to
@@ -67,14 +71,11 @@ const Register = () => {
     setMessage("");
 
     try {
-      const res = await axios.post(
-        "https://course-backend-0lye.onrender.com/register",
-        {
-          username,
-          email,
-          password,
-        }
-      );
+      const res = await api.post("/register", {
+        username,
+        email,
+        password,
+      });
 
       setMessageType("success");
       setMessage(res.data.message || "Registration successful.");

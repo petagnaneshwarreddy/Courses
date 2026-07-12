@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "./apiClient";
 import Nav from "./Nav";
-
-const API_BASE = "https://course-backend-0lye.onrender.com";
 
 /* ------------------------------------------------------------------
    SETTINGS.js — Account & platform settings page
@@ -19,10 +17,16 @@ const API_BASE = "https://course-backend-0lye.onrender.com";
    - Admins additionally see a "Platform settings" panel.
 
    API
-     GET  https://course-backend-0lye.onrender.com/settings
-     PUT  https://course-backend-0lye.onrender.com/settings
-     PUT  https://course-backend-0lye.onrender.com/settings/platform   (admin only)
-     DELETE https://course-backend-0lye.onrender.com/account            (delete account)
+   Now routed through the shared `api` client (see ./apiClient.js),
+   which already:
+     - points at the Render backend (baseURL)
+     - attaches the Bearer token automatically via request interceptor
+     - handles 401/403/500 globally via response interceptor
+   So calls here just use relative paths:
+     GET  /settings
+     PUT  /settings
+     PUT  /settings/platform   (admin only)
+     DELETE /account            (delete account)
    Falls back to sample data if the API isn't reachable yet, so the
    page always renders a complete, interactive preview.
 
@@ -431,6 +435,10 @@ export default function Settings() {
   // NOTE: this only gates access to the page's data/UI. <Nav /> below does
   // its own independent read of localStorage to decide what to render —
   // see Nav.js for why that's a UI convenience, not real authorization.
+  // The apiClient's response interceptor separately handles a 401 coming
+  // back from the server (e.g. an expired token) by clearing storage and
+  // redirecting — this effect just handles the "no token at all" case on
+  // page load, before any request is even made.
   useEffect(() => {
     const token = localStorage.getItem("token");
     const role = (localStorage.getItem("role") || "").toLowerCase();
@@ -450,15 +458,12 @@ export default function Settings() {
   // ---- Load settings -------------------------------------------------------
   useEffect(() => {
     if (!hasToken) return;
-    const token = localStorage.getItem("token");
     let cancelled = false;
     (async () => {
       setLoading(true);
       setLoadError(false);
       try {
-        const res = await axios.get(`${API_BASE}/settings`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await api.get("/settings");
         if (!cancelled) {
           setSettings({ ...SAMPLE_SETTINGS, ...res.data.settings });
           if (res.data.platform) setPlatform({ ...SAMPLE_PLATFORM, ...res.data.platform });
@@ -475,16 +480,13 @@ export default function Settings() {
   }, [hasToken]);
 
   const showToast = (message, type = "success") => setToast({ message, type });
-  const authHeaders = () => ({
-    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-  });
 
   const toggle = (key) => () => setSettings((s) => ({ ...s, [key]: !s[key] }));
 
   const savePreferences = async () => {
     setSavingPrefs(true);
     try {
-      await axios.put(`${API_BASE}/settings`, settings, { headers: authHeaders() });
+      await api.put("/settings", settings);
       showToast("Preferences saved");
     } catch {
       showToast("Saved locally — couldn't reach the server", "danger");
@@ -503,9 +505,7 @@ export default function Settings() {
     e.preventDefault();
     setSavingPlatform(true);
     try {
-      await axios.put(`${API_BASE}/settings/platform`, platform, {
-        headers: authHeaders(),
-      });
+      await api.put("/settings/platform", platform);
       showToast("Platform settings saved");
     } catch {
       showToast("Saved locally — couldn't reach the server", "danger");
@@ -523,7 +523,7 @@ export default function Settings() {
   const handleDeleteAccount = async () => {
     setConfirmOpen(false);
     try {
-      await axios.delete(`${API_BASE}/account`, { headers: authHeaders() });
+      await api.delete("/account");
     } catch {
       /* ignore network error, still sign the user out locally */
     }

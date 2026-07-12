@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from './apiClient';
 
 /**
  * Login
@@ -8,12 +8,11 @@ import axios from 'axios';
  * Design: an "index card" login set against a navy syllabus panel with a
  * vertical learning-path spine (Explore → Learn → Grow → Achieve), echoing
  * the platform's own /explore and /courses routes.
+ *
+ * Uses the shared `api` client (./apiClient) instead of a local axios
+ * instance, so the backend URL and auth handling are defined once for
+ * the whole app.
  */
-
-// Base URL only — no trailing route here. Each request below appends its
-// own path (e.g. `${API_BASE_URL}/login`), so this must NOT already end
-// in "/login" or you'll end up calling /login/login (404).
-const API_BASE_URL = "https://course-backend-0lye.onrender.com";
 
 /* Small inline SVG icon set (stroke-based, currentColor) used inside the
    form fields and step markers in place of plain text glyphs. */
@@ -51,7 +50,7 @@ const Login = () => {
     setSubmitting(true);
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/login`, {
+      const response = await api.post('/login', {
         identifier: userInput,
         password,
       });
@@ -114,7 +113,6 @@ const Login = () => {
           color: var(--ink);
         }
 
-        /* ---------- Left: syllabus panel ---------- */
         .lg-panel {
           position: relative;
           flex: 1 1 42%;
@@ -168,7 +166,6 @@ const Login = () => {
           line-height: 1.6;
         }
 
-        /* Signature element: the learning-path spine */
         .lg-path {
           position: relative;
           z-index: 1;
@@ -225,7 +222,6 @@ const Login = () => {
           color: rgba(245, 239, 226, 0.45);
         }
 
-        /* ---------- Right: index card form ---------- */
         .lg-formside {
           flex: 1 1 58%;
           display: flex;
@@ -245,7 +241,6 @@ const Login = () => {
           box-shadow: 0 1px 2px rgba(22,35,63,0.04), 0 18px 40px -22px rgba(22,35,63,0.35);
         }
 
-        /* ribbon tab, the card's "bookmark" */
         .lg-ribbon {
           position: absolute;
           top: -1px;
