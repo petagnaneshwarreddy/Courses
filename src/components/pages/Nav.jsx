@@ -59,20 +59,17 @@ import "./Nav.css";
 
 const LOGIN_ROUTE = "/login";
 
-const ROUTES = Object.freeze({
-  // "Dashboard" resolves to one of these two depending on role — admins
-  // land on the admin dashboard, students land on the student Home page.
+const ROUTES = {
   adminDashboard: "/admin/dashboard",
   home: "/home",
   courses: "/courses",
   students: "/students",
   inviteStudent: "/admin/invite",
   paymentRequests: "/admin/payment-requests",
-
   notifications: "/notifications",
   profile: "/profile",
   settings: "/settings",
-});
+};
 
 const STORAGE_KEYS = Object.freeze({
   token: "token",

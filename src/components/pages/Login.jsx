@@ -67,7 +67,7 @@ const Login = () => {
 
         // Route based on the role the SERVER verified, not client input
         setTimeout(() => {
-          navigate(role === 'admin' ? '/admin/dashboard' : '/courses');
+          navigate(role === 'admin' ? '/admin/dashboard' : '/home');
         }, 800);
       } else {
         setMessageType('error');

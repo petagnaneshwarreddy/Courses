@@ -1,6 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import Landing from "./components/pages/Landing";
+import Home from "./components/pages/Home"; // <-- Added
+
 import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
 import ForgotPassword from "./components/pages/ForgotPassword";
@@ -16,7 +18,7 @@ import Students from "./components/pages/Students";
 import Profile from "./components/pages/Profile";
 import Settings from "./components/pages/Settings";
 import Notifications from "./components/pages/Notifications";
-import Invite from "./components/pages/invite"; // <-- fixed
+import Invite from "./components/pages/invite";
 import Paymentrequests from "./components/pages/Paymentrequests";
 
 // =========================
@@ -27,7 +29,7 @@ function AdminRoute({ children }) {
   const role = localStorage.getItem("role");
 
   if (!token) return <Navigate to="/login" replace />;
-  if (role !== "admin") return <Navigate to="/courses" replace />;
+  if (role !== "admin") return <Navigate to="/home" replace />;
 
   return children;
 }
@@ -46,7 +48,7 @@ function PrivateRoute({ children }) {
 function App() {
   return (
     <Routes>
-      {/* Landing */}
+      {/* Public Landing */}
       <Route path="/" element={<Landing />} />
 
       {/* Authentication */}
@@ -54,7 +56,17 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
-      {/* Student */}
+      {/* Student Home */}
+      <Route
+        path="/home"
+        element={
+          <PrivateRoute>
+            <Home />
+          </PrivateRoute>
+        }
+      />
+
+      {/* Student Pages */}
       <Route
         path="/courses"
         element={
@@ -145,7 +157,7 @@ function App() {
         }
       />
 
-      {/* Admin */}
+      {/* Admin Pages */}
       <Route
         path="/admin/dashboard"
         element={
