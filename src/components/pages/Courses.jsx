@@ -5,7 +5,7 @@ import Nav from "./Nav";
 
 // Base API root — course routes live directly at `${API_BASE}/courses`,
 // matching the backend's app.get/post/put/delete("/courses"...) routes.
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://course-backend-01ye.onrender.com";
 
 /* ------------------------------------------------------------------
    COURSES.js  —  Admin-only course management page

@@ -6,7 +6,7 @@ import Nav from "./Nav";
 import skillfullLogo from "../../assets/skillfull-logo.png";
 
 // Same API root the rest of the app uses.
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://course-backend-01ye.onrender.com";
 
 // Mount this at a route like:  <Route path="/certificate/:id" element={<Certificate />} />
 // Content.js navigates here with: navigate(`/certificate/${course.id}`, { state: { course, studentName } })
