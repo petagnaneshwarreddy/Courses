@@ -6,7 +6,7 @@ import Register from "./components/pages/Register";
 import ForgotPassword from "./components/pages/ForgotPassword";
 
 import Courses from "./components/pages/Courses";
-import CourseDetail from "./components/pages/CourseDetail";
+import CourseDetail from "./components/pages/Coursedetail";
 import Content from "./components/pages/Content";
 import Certificate from "./components/pages/Certificate";
 import Payment from "./components/pages/Payment";
