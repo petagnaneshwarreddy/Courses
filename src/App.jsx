@@ -16,7 +16,7 @@ import Students from "./components/pages/Students";
 import Profile from "./components/pages/Profile";
 import Settings from "./components/pages/Settings";
 import Notifications from "./components/pages/Notifications";
-import Invite from "./components/pages/Invite";
+import Invite from "./components/pages/invite"; // <-- fixed
 import Paymentrequests from "./components/pages/Paymentrequests";
 
 // =========================
@@ -64,7 +64,6 @@ function App() {
         }
       />
 
-      {/* Course landing page — shows details, syllabus, "Start for Free" / "Continue Learning" */}
       <Route
         path="/courses/:id"
         element={
@@ -74,7 +73,6 @@ function App() {
         }
       />
 
-      {/* Course player — chapters, video, notes, code, practice quiz */}
       <Route
         path="/courses/:id/learn"
         element={
@@ -84,7 +82,6 @@ function App() {
         }
       />
 
-      {/* Legacy alias, kept for any existing links pointing at /content/:id */}
       <Route
         path="/content/:id"
         element={
@@ -94,7 +91,6 @@ function App() {
         }
       />
 
-      {/* Certificate — confirm details, then view/download */}
       <Route
         path="/certificate/:id"
         element={
