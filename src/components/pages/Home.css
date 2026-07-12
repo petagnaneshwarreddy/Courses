@@ -1,0 +1,598 @@
+/* ---------------------------------------------------------------------
+   Home.css
+   -----------------------------------------------------------------------
+   Styles for Home.jsx (student landing page, "/home").
+   Self-contained: covers layout shell, stat tiles, continue-learning
+   cards, recommended cards, empty states, and skeleton/loading states.
+   ------------------------------------------------------------------- */
+
+:root {
+  --home-bg: #f7f8fa;
+  --home-surface: #ffffff;
+  --home-border: #e5e7eb;
+  --home-text: #111827;
+  --home-text-muted: #6b7280;
+  --home-text-faint: #9ca3af;
+  --home-accent: #4f46e5;
+  --home-accent-soft: #eef2ff;
+  --home-radius-sm: 10px;
+  --home-radius-md: 14px;
+  --home-radius-lg: 18px;
+  --home-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+  --home-shadow-hover: 0 4px 12px rgba(16, 24, 40, 0.08), 0 2px 4px rgba(16, 24, 40, 0.06);
+}
+
+/* -----------------------------------------------------------------------
+ * Shell
+ * ---------------------------------------------------------------------*/
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--home-bg);
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.home-page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 40px 32px 72px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* -----------------------------------------------------------------------
+ * Header
+ * ---------------------------------------------------------------------*/
+
+.home-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.home-eyebrow {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--home-accent);
+}
+
+.home-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--home-text);
+  letter-spacing: -0.02em;
+}
+
+.home-subtitle {
+  margin: 0;
+  font-size: 15px;
+  color: var(--home-text-muted);
+}
+
+/* -----------------------------------------------------------------------
+ * Stat grid
+ * ---------------------------------------------------------------------*/
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.stat-tile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  background: var(--home-surface);
+  border: 1px solid var(--home-border);
+  border-radius: var(--home-radius-md);
+  box-shadow: var(--home-shadow);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.stat-tile:hover {
+  box-shadow: var(--home-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.stat-tile__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.stat-tile__icon--blue {
+  background: #eaf1ff;
+  color: #2563eb;
+}
+
+.stat-tile__icon--green {
+  background: #e8f9f0;
+  color: #059669;
+}
+
+.stat-tile__icon--purple {
+  background: #f2edfe;
+  color: #7c3aed;
+}
+
+.stat-tile__icon--orange {
+  background: #fef2e8;
+  color: #ea580c;
+}
+
+.stat-tile__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.stat-tile__label {
+  font-size: 12.5px;
+  color: var(--home-text-muted);
+  font-weight: 500;
+}
+
+.stat-tile__value {
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--home-text);
+  line-height: 1.2;
+}
+
+/* -----------------------------------------------------------------------
+ * Section shell (shared by "Continue learning" and "Recommended")
+ * ---------------------------------------------------------------------*/
+
+.home-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.home-section__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.home-section__header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--home-text);
+}
+
+.home-section__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--home-accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.home-section__link:hover {
+  text-decoration: underline;
+}
+
+.home-section__link svg {
+  transition: transform 0.15s ease;
+}
+
+.home-section__link:hover svg {
+  transform: translateX(2px);
+}
+
+/* -----------------------------------------------------------------------
+ * Continue learning — horizontal list of wide cards
+ * ---------------------------------------------------------------------*/
+
+.continue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.continue-card {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  padding: 14px;
+  background: var(--home-surface);
+  border: 1px solid var(--home-border);
+  border-radius: var(--home-radius-md);
+  box-shadow: var(--home-shadow);
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+.continue-card:hover {
+  box-shadow: var(--home-shadow-hover);
+  border-color: #d7dae0;
+  transform: translateY(-1px);
+}
+
+.continue-card__thumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 128px;
+  height: 84px;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.continue-card__play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #111827;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease;
+}
+
+.continue-card:hover .continue-card__play {
+  transform: scale(1.06);
+}
+
+.continue-card__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+
+.continue-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.continue-card__category {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--home-accent);
+}
+
+.continue-card__progress-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--home-text-muted);
+  flex-shrink: 0;
+}
+
+.continue-card__title {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--home-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.continue-card__meta {
+  font-size: 13px;
+  color: var(--home-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.continue-card__track {
+  display: block;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: #eef0f3;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.continue-card__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #6366f1, #4f46e5);
+  transition: width 0.3s ease;
+}
+
+/* -----------------------------------------------------------------------
+ * Recommended — responsive card grid
+ * ---------------------------------------------------------------------*/
+
+.rec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.rec-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--home-surface);
+  border: 1px solid var(--home-border);
+  border-radius: var(--home-radius-md);
+  box-shadow: var(--home-shadow);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+.rec-card:hover {
+  box-shadow: var(--home-shadow-hover);
+  border-color: #d7dae0;
+  transform: translateY(-2px);
+}
+
+.rec-card__thumb {
+  position: relative;
+  height: 120px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 10px;
+}
+
+.rec-card__badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #111827;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 9px;
+  border-radius: 999px;
+}
+
+.rec-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 16px;
+  flex: 1;
+}
+
+.rec-card__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--home-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.35;
+  min-height: 2.7em;
+}
+
+.rec-card__meta {
+  font-size: 12.5px;
+  color: var(--home-text-muted);
+}
+
+.rec-card__footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px dashed var(--home-border);
+}
+
+.rec-card__duration {
+  font-size: 12.5px;
+  color: var(--home-text-faint);
+  font-weight: 500;
+}
+
+.rec-card__price {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--home-accent);
+}
+
+/* -----------------------------------------------------------------------
+ * Empty states
+ * ---------------------------------------------------------------------*/
+
+.home-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 36px 24px;
+  background: var(--home-surface);
+  border: 1px dashed var(--home-border);
+  border-radius: var(--home-radius-md);
+  color: var(--home-text-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.home-empty__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--home-accent);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.home-empty__cta:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+.home-empty__cta--button {
+  display: inline-flex;
+}
+
+.home-empty--full {
+  min-height: 45vh;
+  border: none;
+  background: transparent;
+}
+
+/* -----------------------------------------------------------------------
+ * Skeleton / loading states
+ * Matches stat-tile / continue-card / rec-card layouts so nothing jumps
+ * when real data replaces the placeholders.
+ * ---------------------------------------------------------------------*/
+
+@keyframes home-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.skeleton {
+  display: inline-block;
+  background: #e5e7eb;
+  border-radius: 6px;
+  animation: home-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton--circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skeleton--line {
+  height: 10px;
+  border-radius: 4px;
+}
+
+.skeleton--short {
+  width: 40%;
+}
+
+.skeleton--medium {
+  width: 65%;
+}
+
+.skeleton--long {
+  width: 85%;
+}
+
+.skeleton--thumb {
+  width: 128px;
+  height: 84px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.skeleton--thumb-wide {
+  width: 100%;
+  height: 120px;
+  border-radius: 0;
+}
+
+.stat-tile--skeleton .stat-tile__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.continue-card--skeleton,
+.rec-card--skeleton {
+  cursor: default;
+  pointer-events: none;
+}
+
+.continue-card--skeleton .continue-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+}
+
+.rec-card--skeleton .rec-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* -----------------------------------------------------------------------
+ * Responsive
+ * ---------------------------------------------------------------------*/
+
+@media (max-width: 960px) {
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .home-page {
+    padding: 32px 20px 56px;
+  }
+}
+
+@media (max-width: 640px) {
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .continue-card {
+    flex-direction: column;
+  }
+
+  .continue-card__thumb {
+    width: 100%;
+    height: 140px;
+  }
+
+  .home-title {
+    font-size: 23px;
+  }
+
+  .rec-grid {
+    grid-template-columns: 1fr;
+  }
+}

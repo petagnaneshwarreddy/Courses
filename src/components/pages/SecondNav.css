@@ -1,0 +1,41 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  background-color: #007bff;
+  padding: 10px 20px;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.nav-item {
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+.profile {
+  position: relative;
+  cursor: pointer;
+}
+
+.profile-menu {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background: white;
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+  z-index: 1000;
+}
+
+.profile-menu div {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.profile-menu div:hover {
+  background-color: #f2f2f2;
+}
