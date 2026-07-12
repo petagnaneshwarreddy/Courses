@@ -40,7 +40,7 @@ import axios from "axios";
 // Same backend URL used across the app. Keep this the ONLY place it's
 // defined once you migrate a page to apiClient, so there's no more
 // risk of one file pointing at backend-qtzh and another at backend-4138.
-const API_BASE = "https://backend-qtzh.onrender.com";
+const API_BASE = "https://course-backend-01ye.onrender.com";
 
 const LOGIN_ROUTE = "/explore/login"; // adjust if your login route differs
 
