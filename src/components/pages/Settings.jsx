@@ -11,18 +11,25 @@ import Nav from "./Nav";
    (styles are included inline below — no separate CSS file needed)
 
    ACCESS
-   Same pattern as the rest of the app: localStorage "token" + "role".
+   Same pattern as Courses.js: we only ever trust a raw token in
+   localStorage client-side. Whether the current user is an admin is
+   resolved by asking the backend's GET /me route, which looks the
+   role up fresh in MongoDB on every request — a user editing
+   localStorage in DevTools can no longer make the "Platform settings"
+   panel appear, and the backend's own requireAdmin middleware remains
+   the real security boundary on the write routes regardless.
    - No token -> redirected to /login
    - Any logged-in user sees notification + privacy preferences.
    - Admins additionally see a "Platform settings" panel.
 
    API
-   Now routed through the shared `api` client (see ./apiClient.js),
-   which already:
+   Routed through the shared `api` client (see ./apiClient.js), which
+   already:
      - points at the Render backend (baseURL)
      - attaches the Bearer token automatically via request interceptor
      - handles 401/403/500 globally via response interceptor
    So calls here just use relative paths:
+     GET  /me           (resolve role)
      GET  /settings
      PUT  /settings
      PUT  /settings/platform   (admin only)
@@ -109,6 +116,17 @@ function Toggle({ checked, onChange, label, description }) {
         <span className="set-switch__knob" />
       </span>
     </label>
+  );
+}
+
+function SkeletonPanel() {
+  return (
+    <div className="set-panel set-panel--skeleton" aria-hidden="true">
+      <div className="set-skel set-skel--title" />
+      <div className="set-skel set-skel--row" />
+      <div className="set-skel set-skel--row" />
+      <div className="set-skel set-skel--row" />
+    </div>
   );
 }
 
@@ -213,6 +231,24 @@ function SettingsStyles() {
   padding: 22px 24px;
 }
 .set-panel--danger { border-color: #ffd6df; }
+
+.set-panel--skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.set-skel {
+  background: linear-gradient(90deg, #edeef3 25%, #f5f6f9 37%, #edeef3 63%);
+  background-size: 400% 100%;
+  animation: set-shimmer 1.4s ease infinite;
+  border-radius: 6px;
+}
+.set-skel--title { height: 18px; width: 40%; }
+.set-skel--row { height: 40px; width: 100%; }
+@keyframes set-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
 
 .set-panel__header { margin-bottom: 6px; }
 .set-panel__header h2 {
@@ -432,16 +468,15 @@ export default function Settings() {
   const [toast, setToast] = useState(null);
 
   // ---- Auth check --------------------------------------------------------
-  // NOTE: this only gates access to the page's data/UI. <Nav /> below does
-  // its own independent read of localStorage to decide what to render —
-  // see Nav.js for why that's a UI convenience, not real authorization.
-  // The apiClient's response interceptor separately handles a 401 coming
-  // back from the server (e.g. an expired token) by clearing storage and
-  // redirecting — this effect just handles the "no token at all" case on
-  // page load, before any request is even made.
+  // Only a raw token is ever trusted from localStorage. Whether this user
+  // is an admin is resolved by asking the backend's GET /me route, which
+  // looks the role up fresh in MongoDB on every request — same pattern as
+  // Courses.js — so editing localStorage in DevTools can no longer make
+  // the "Platform settings" panel appear. The backend's own requireAdmin
+  // middleware remains the real security boundary on every write route
+  // regardless of what this check decides.
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const role = (localStorage.getItem("role") || "").toLowerCase();
 
     if (!token) {
       setHasToken(false);
@@ -450,9 +485,29 @@ export default function Settings() {
       return () => clearTimeout(t);
     }
 
-    setHasToken(true);
-    setIsAdmin(role === "admin");
-    setAuthChecked(true);
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await api.get("/me");
+        if (cancelled) return;
+        setHasToken(true);
+        setIsAdmin((res.data.role || "").toLowerCase() === "admin");
+      } catch {
+        // Token invalid/expired — treat as logged out.
+        if (cancelled) return;
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        setHasToken(false);
+        const t = setTimeout(() => navigate(LOGIN_ROUTE), 1200);
+        return () => clearTimeout(t);
+      } finally {
+        if (!cancelled) setAuthChecked(true);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [navigate]);
 
   // ---- Load settings -------------------------------------------------------
@@ -590,138 +645,145 @@ export default function Settings() {
             </div>
           )}
 
-          <div className="set-layout">
-            <section className="set-panel">
-              <div className="set-panel__header">
-                <h2>Notifications</h2>
-                <p>Choose what you hear from us and how often.</p>
-              </div>
-              <Toggle
-                checked={settings.emailNotifications}
-                onChange={toggle("emailNotifications")}
-                label="Email notifications"
-                description="Account activity, enrollments and important updates."
-              />
-              <Toggle
-                checked={settings.courseUpdates}
-                onChange={toggle("courseUpdates")}
-                label="Course updates"
-                description="New lessons or changes to courses you're enrolled in."
-              />
-              <Toggle
-                checked={settings.weeklyDigest}
-                onChange={toggle("weeklyDigest")}
-                label="Weekly digest"
-                description="A short summary of your progress every Monday."
-              />
-              <Toggle
-                checked={settings.promotionalEmails}
-                onChange={toggle("promotionalEmails")}
-                label="Promotional emails"
-                description="Offers, new course announcements and newsletters."
-              />
-              <div className="set-form__actions">
-                <button className="set-btn set-btn--primary" onClick={savePreferences} disabled={savingPrefs}>
-                  {savingPrefs ? "Saving…" : "Save preferences"}
-                </button>
-              </div>
-            </section>
-
-            <section className="set-panel">
-              <div className="set-panel__header">
-                <h2>Privacy</h2>
-                <p>Control what other people on the platform can see.</p>
-              </div>
-              <Toggle
-                checked={settings.profileVisible}
-                onChange={toggle("profileVisible")}
-                label="Public profile"
-                description="Let other learners see your name and avatar."
-              />
-              <Toggle
-                checked={settings.showProgressToOthers}
-                onChange={toggle("showProgressToOthers")}
-                label="Share course progress"
-                description="Show your course completion on your public profile."
-              />
-              <div className="set-form__actions">
-                <button className="set-btn set-btn--primary" onClick={savePreferences} disabled={savingPrefs}>
-                  {savingPrefs ? "Saving…" : "Save preferences"}
-                </button>
-              </div>
-            </section>
-
-            {isAdmin && (
+          {loading ? (
+            <div className="set-layout">
+              <SkeletonPanel />
+              <SkeletonPanel />
+            </div>
+          ) : (
+            <div className="set-layout">
               <section className="set-panel">
                 <div className="set-panel__header">
-                  <h2>Platform settings</h2>
-                  <p>Admin-only controls for the whole platform.</p>
+                  <h2>Notifications</h2>
+                  <p>Choose what you hear from us and how often.</p>
                 </div>
-                <form onSubmit={savePlatform}>
-                  <div className="set-field-grid">
-                    <label className="set-field">
-                      <span>Site name</span>
-                      <input type="text" value={platform.siteName} onChange={updatePlatform("siteName")} />
-                    </label>
-                    <label className="set-field">
-                      <span>Support email</span>
-                      <input
-                        type="email"
-                        value={platform.supportEmail}
-                        onChange={updatePlatform("supportEmail")}
-                      />
-                    </label>
-                  </div>
-                  <Toggle
-                    checked={platform.allowNewSignups}
-                    onChange={() =>
-                      setPlatform((p) => ({ ...p, allowNewSignups: !p.allowNewSignups }))
-                    }
-                    label="Allow new signups"
-                    description="Turn off to temporarily stop new students from registering."
-                  />
-                  <Toggle
-                    checked={platform.maintenanceMode}
-                    onChange={() =>
-                      setPlatform((p) => ({ ...p, maintenanceMode: !p.maintenanceMode }))
-                    }
-                    label="Maintenance mode"
-                    description="Show a maintenance page to students while you make changes."
-                  />
-                  <div className="set-form__actions">
-                    <button className="set-btn set-btn--primary" type="submit" disabled={savingPlatform}>
-                      {savingPlatform ? "Saving…" : "Save platform settings"}
-                    </button>
-                  </div>
-                </form>
+                <Toggle
+                  checked={settings.emailNotifications}
+                  onChange={toggle("emailNotifications")}
+                  label="Email notifications"
+                  description="Account activity, enrollments and important updates."
+                />
+                <Toggle
+                  checked={settings.courseUpdates}
+                  onChange={toggle("courseUpdates")}
+                  label="Course updates"
+                  description="New lessons or changes to courses you're enrolled in."
+                />
+                <Toggle
+                  checked={settings.weeklyDigest}
+                  onChange={toggle("weeklyDigest")}
+                  label="Weekly digest"
+                  description="A short summary of your progress every Monday."
+                />
+                <Toggle
+                  checked={settings.promotionalEmails}
+                  onChange={toggle("promotionalEmails")}
+                  label="Promotional emails"
+                  description="Offers, new course announcements and newsletters."
+                />
+                <div className="set-form__actions">
+                  <button className="set-btn set-btn--primary" onClick={savePreferences} disabled={savingPrefs}>
+                    {savingPrefs ? "Saving…" : "Save preferences"}
+                  </button>
+                </div>
               </section>
-            )}
 
-            <section className="set-panel set-panel--danger">
-              <div className="set-panel__header">
-                <h2>Danger zone</h2>
-                <p>These actions are irreversible — proceed with care.</p>
-              </div>
-              <div className="set-danger-row" style={{ marginBottom: 16 }}>
-                <div>
-                  <strong>Log out</strong>
-                  <p>Sign out of your account on this device.</p>
+              <section className="set-panel">
+                <div className="set-panel__header">
+                  <h2>Privacy</h2>
+                  <p>Control what other people on the platform can see.</p>
                 </div>
-                <button className="set-btn set-btn--ghost" onClick={handleLogout}>
-                  Log out
-                </button>
-              </div>
-              <div className="set-danger-row">
-                <div>
-                  <strong>Delete account</strong>
-                  <p>Permanently delete your account and all associated data.</p>
+                <Toggle
+                  checked={settings.profileVisible}
+                  onChange={toggle("profileVisible")}
+                  label="Public profile"
+                  description="Let other learners see your name and avatar."
+                />
+                <Toggle
+                  checked={settings.showProgressToOthers}
+                  onChange={toggle("showProgressToOthers")}
+                  label="Share course progress"
+                  description="Show your course completion on your public profile."
+                />
+                <div className="set-form__actions">
+                  <button className="set-btn set-btn--primary" onClick={savePreferences} disabled={savingPrefs}>
+                    {savingPrefs ? "Saving…" : "Save preferences"}
+                  </button>
                 </div>
-                <button className="set-btn set-btn--danger-ghost" onClick={() => setConfirmOpen(true)}>
-                  Delete account
-                </button>
-              </div>
-            </section>
-          </div>
+              </section>
+
+              {isAdmin && (
+                <section className="set-panel">
+                  <div className="set-panel__header">
+                    <h2>Platform settings</h2>
+                    <p>Admin-only controls for the whole platform.</p>
+                  </div>
+                  <form onSubmit={savePlatform}>
+                    <div className="set-field-grid">
+                      <label className="set-field">
+                        <span>Site name</span>
+                        <input type="text" value={platform.siteName} onChange={updatePlatform("siteName")} />
+                      </label>
+                      <label className="set-field">
+                        <span>Support email</span>
+                        <input
+                          type="email"
+                          value={platform.supportEmail}
+                          onChange={updatePlatform("supportEmail")}
+                        />
+                      </label>
+                    </div>
+                    <Toggle
+                      checked={platform.allowNewSignups}
+                      onChange={() =>
+                        setPlatform((p) => ({ ...p, allowNewSignups: !p.allowNewSignups }))
+                      }
+                      label="Allow new signups"
+                      description="Turn off to temporarily stop new students from registering."
+                    />
+                    <Toggle
+                      checked={platform.maintenanceMode}
+                      onChange={() =>
+                        setPlatform((p) => ({ ...p, maintenanceMode: !p.maintenanceMode }))
+                      }
+                      label="Maintenance mode"
+                      description="Show a maintenance page to students while you make changes."
+                    />
+                    <div className="set-form__actions">
+                      <button className="set-btn set-btn--primary" type="submit" disabled={savingPlatform}>
+                        {savingPlatform ? "Saving…" : "Save platform settings"}
+                      </button>
+                    </div>
+                  </form>
+                </section>
+              )}
+
+              <section className="set-panel set-panel--danger">
+                <div className="set-panel__header">
+                  <h2>Danger zone</h2>
+                  <p>These actions are irreversible — proceed with care.</p>
+                </div>
+                <div className="set-danger-row" style={{ marginBottom: 16 }}>
+                  <div>
+                    <strong>Log out</strong>
+                    <p>Sign out of your account on this device.</p>
+                  </div>
+                  <button className="set-btn set-btn--ghost" onClick={handleLogout}>
+                    Log out
+                  </button>
+                </div>
+                <div className="set-danger-row">
+                  <div>
+                    <strong>Delete account</strong>
+                    <p>Permanently delete your account and all associated data.</p>
+                  </div>
+                  <button className="set-btn set-btn--danger-ghost" onClick={() => setConfirmOpen(true)}>
+                    Delete account
+                  </button>
+                </div>
+              </section>
+            </div>
+          )}
         </div>
       </div>
     </div>
