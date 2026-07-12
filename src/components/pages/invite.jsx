@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Nav from "./Nav";
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://course-backend-0lye.onrender.com";
 
 /* ------------------------------------------------------------------
    INVITE.jsx — Admin-only "invite a student to a course" page
@@ -32,9 +32,9 @@ const API_BASE = "http://localhost:5000";
       the assigned course.
 
    API (see server.js — POST /invite and GET /invites)
-     GET  http://localhost:5000/courses
-     GET  http://localhost:5000/invites
-     POST http://localhost:5000/invite   { courseId, email, phone, password }
+     GET  https://course-backend-0lye.onrender.com/courses
+     GET  https://course-backend-0lye.onrender.com/invites
+     POST https://course-backend-0lye.onrender.com/invite   { courseId, email, phone, password }
           -> { link, username, password, courseTitle }
    Falls back to sample data / a locally-built invite link if the API
    isn't reachable yet, so the page always renders a complete preview.

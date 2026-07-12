@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Nav from "./Nav";
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://course-backend-0lye.onrender.com";
 
 /* ------------------------------------------------------------------
    STUDENTS.js — Admin student directory
@@ -19,9 +19,9 @@ const API_BASE = "http://localhost:5000";
    - Admin -> full directory
 
    API (all defined in server.js already)
-     GET    http://localhost:5000/students             admin only
-     PUT    http://localhost:5000/students/:id          { status }
-     DELETE http://localhost:5000/students/:id
+     GET    https://course-backend-0lye.onrender.com/students             admin only
+     PUT    https://course-backend-0lye.onrender.com/students/:id          { status }
+     DELETE https://course-backend-0lye.onrender.com/students/:id
    Falls back to sample data if the API isn't reachable yet, so the
    page always renders a complete, interactive preview.
 

@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import Nav from "./Nav";
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://course-backend-0lye.onrender.com";
 
 /* ------------------------------------------------------------------
    Payment.jsx  —  mock checkout page.

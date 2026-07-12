@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Nav from "./Nav";
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://course-backend-0lye.onrender.com";
 
 /* ------------------------------------------------------------------
    SETTINGS.js — Account & platform settings page
@@ -19,10 +19,10 @@ const API_BASE = "http://localhost:5000";
    - Admins additionally see a "Platform settings" panel.
 
    API
-     GET  http://localhost:5000/settings
-     PUT  http://localhost:5000/settings
-     PUT  http://localhost:5000/settings/platform   (admin only)
-     DELETE http://localhost:5000/account            (delete account)
+     GET  https://course-backend-0lye.onrender.com/settings
+     PUT  https://course-backend-0lye.onrender.com/settings
+     PUT  https://course-backend-0lye.onrender.com/settings/platform   (admin only)
+     DELETE https://course-backend-0lye.onrender.com/account            (delete account)
    Falls back to sample data if the API isn't reachable yet, so the
    page always renders a complete, interactive preview.
 

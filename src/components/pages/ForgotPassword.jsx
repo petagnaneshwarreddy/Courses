@@ -108,7 +108,7 @@ const ForgotPassword = () => {
     setLoading(true);
     setMessage('');
     try {
-      await axios.post('http://localhost:5000/forgot-password', {
+      await axios.post('https://course-backend-0lye.onrender.com/forgot-password', {
         email,
         otp,
         newPassword,

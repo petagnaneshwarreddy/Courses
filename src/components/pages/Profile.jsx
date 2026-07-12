@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Nav from "./Nav";
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://course-backend-0lye.onrender.com";
 
 /* ------------------------------------------------------------------
    PROFILE.js — Account profile page (student + admin)

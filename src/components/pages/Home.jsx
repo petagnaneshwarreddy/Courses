@@ -21,7 +21,7 @@ import "./Home.css";
 // browser under Vite and referencing it throws "process is not defined",
 // which crashes the component. Set VITE_API_URL in a .env file at the
 // project root if your API isn't at localhost:5000.
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_BASE = import.meta.env.VITE_API_URL || "https://course-backend-0lye.onrender.com";
 
 const STORAGE_KEYS = Object.freeze({
   token: "token",
