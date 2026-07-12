@@ -10,6 +10,11 @@ import axios from 'axios';
  * the platform's own /explore and /courses routes.
  */
 
+// Base URL of the deployed backend (see server.js). Keep this in sync with
+// the same constant in Register.jsx — both must point at the live Render
+// deploy, e.g. https://course-backend-0lye.onrender.com
+const API_BASE_URL = "https://course-backend-0lye.onrender.com";
+
 /* Small inline SVG icon set (stroke-based, currentColor) used inside the
    form fields and step markers in place of plain text glyphs. */
 const Icon = {
@@ -46,7 +51,7 @@ const Login = () => {
     setSubmitting(true);
 
     try {
-      const response = await axios.post("https://course-backend-01ye.onrender.com/login", {
+      const response = await axios.post(`${API_BASE_URL}/login`, {
         identifier: userInput,
         password,
       });
