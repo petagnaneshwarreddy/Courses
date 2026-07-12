@@ -68,7 +68,7 @@ const Register = () => {
 
     try {
       const res = await axios.post(
-        "https://course-backend-01ye.onrender.com/register",
+        "https://course-backend-01ye.onrender.com",
         {
           username,
           email,
